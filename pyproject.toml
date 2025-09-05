@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "apicrafter-cli"
-version = "0.1.0"
+version = "0.1.7"
 description = "A terminal-first, interactive API client that brings Postman-like features into the CLI"
 authors = [{name = "Yash Singh", email = "yashs3326@gmail.com"}]
 maintainers = [{name = "Yash Singh", email = "yashs3326@gmail.com"}]
