@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "apicrafter"
+version = "0.1.0"
+description = "A terminal-first, interactive API client that brings Postman-like features into the CLI"
+authors = [{name = "Yash Singh", email = "yashs3326@gmail.com"}]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Internet :: WWW/HTTP",
+    "Environment :: Console",
+]
+keywords = ["api", "http", "client", "cli", "postman", "rest"]
+
+dependencies = [
+    "typer>=0.9.0",
+    "httpx>=0.24.0",
+    "rich>=13.0.0",
+    "questionary>=2.0.0",
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0.0",
+    "click>=8.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "mypy>=1.0.0",
+    "pre-commit>=3.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/apicrafter"
+Repository = "https://github.com/yourusername/apicrafter"
+Documentation = "https://github.com/yourusername/apicrafter#readme"
+"Bug Tracker" = "https://github.com/yourusername/apicrafter/issues"
+
+[project.scripts]
+apicrafter = "apicrafter.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["apicrafter*"]
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
