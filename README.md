@@ -20,7 +20,7 @@ A terminal-first, interactive API client that brings Postman-like features into 
 ### Installation
 
 ```bash
-pip install apicrafter
+pip install apicrafter-cli
 ```
 
 ### Basic Usage
