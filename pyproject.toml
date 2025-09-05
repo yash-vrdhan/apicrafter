@@ -7,13 +7,13 @@ name = "apicrafter"
 version = "0.1.0"
 description = "A terminal-first, interactive API client that brings Postman-like features into the CLI"
 authors = [{name = "Yash Singh", email = "yashs3326@gmail.com"}]
-license = {text = "MIT"}
-readme = "README.md"
+maintainers = [{name = "Yash Singh", email = "yashs3326@gmail.com"}]
+license = "MIT"
+readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.9"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -21,7 +21,11 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Testing",
     "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Networking",
     "Environment :: Console",
+    "Operating System :: OS Independent",
 ]
 keywords = ["api", "http", "client", "cli", "postman", "rest"]
 
@@ -46,10 +50,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/apicrafter"
-Repository = "https://github.com/yourusername/apicrafter"
-Documentation = "https://github.com/yourusername/apicrafter#readme"
-"Bug Tracker" = "https://github.com/yourusername/apicrafter/issues"
+Homepage = "https://github.com/yash-vrdhan/apicrafter"
+Repository = "https://github.com/yash-vrdhan/apicrafter"
+Documentation = "https://github.com/yash-vrdhan/apicrafter#readme"
+"Bug Tracker" = "https://github.com/yash-vrdhan/apicrafter/issues"
 
 [project.scripts]
 apicrafter = "apicrafter.cli:app"

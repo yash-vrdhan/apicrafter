@@ -1,8 +1,4 @@
-# 🛠️ apicrafter
-
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+# apicrafter
 
 A terminal-first, interactive API client that brings Postman-like features into the CLI. Built with modern Python tooling and designed for developers who prefer the command line.
 
@@ -24,18 +20,7 @@ A terminal-first, interactive API client that brings Postman-like features into 
 ### Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/apicrafter.git
-cd apicrafter
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Install the package
-pip install -e .
-
-# Verify installation
-apicrafter --help
+pip install apicrafter
 ```
 
 ### Basic Usage
@@ -53,11 +38,10 @@ apicrafter send POST https://httpbin.org/post \
 apicrafter interactive
 ```
 
-## 📖 Documentation
+## 📖 Core Commands
 
-### Core Commands
+### Send Requests
 
-#### Send Requests
 ```bash
 # Basic request
 apicrafter send GET https://api.example.com/users
@@ -82,7 +66,8 @@ apicrafter send GET https://api.example.com/users \
   --param limit=10
 ```
 
-#### Collections Management
+### Collections Management
+
 ```bash
 # Save a request to a collection
 apicrafter save get-users \
@@ -95,68 +80,39 @@ apicrafter run get-users
 
 # List all collections
 apicrafter collections
-
-# List requests in a collection
-apicrafter collections get-users
 ```
 
-#### Environment Management
+### Environment Management
+
 ```bash
 # Set environment variables
 apicrafter env-set dev BASE_URL https://dev-api.example.com
 apicrafter env-set dev TOKEN dev_token_123
 
-apicrafter env-set prod BASE_URL https://api.example.com
-apicrafter env-set prod TOKEN prod_token_456
-
-# List environments
-apicrafter environments
-
 # Run request with specific environment
 apicrafter run get-users --env dev
 ```
 
-#### Request History
+### Request History
+
 ```bash
 # View request history
 apicrafter history
 
-# View last 10 requests
-apicrafter history --limit 10
-
 # Replay a request from history
 apicrafter replay 1
-
-# Replay with different environment
-apicrafter replay 1 --env prod
 ```
 
-#### Testing
+### Testing
+
 ```bash
 # Test a request with assertions
 apicrafter test GET https://api.example.com/health \
   --assert-status 200 \
   --assert-json "status:healthy"
-
-# Test saved request
-apicrafter test get-users --assert-status 200
 ```
 
-### Interactive Mode
-
-The interactive mode provides a guided experience for building requests:
-
-```bash
-apicrafter interactive
-```
-
-This will present you with:
-- Step-by-step request building
-- Collection and environment management
-- Request saving and organization
-- History browsing and replay
-
-### Configuration
+## 🔧 Configuration
 
 apicrafter stores its configuration in `~/.apicrafter/`:
 
@@ -180,75 +136,13 @@ Use the `{{VARIABLE}}` syntax in your requests for dynamic values:
     Authorization: "Bearer {{TOKEN}}"
 ```
 
-```yaml
-# In envs.yaml
-dev:
-  BASE_URL: "https://dev-api.example.com"
-  TOKEN: "dev_token_123"
-  USER_ID: "1"
+## 📚 Documentation
 
-prod:
-  BASE_URL: "https://api.example.com"
-  TOKEN: "prod_token_456"
-  USER_ID: "1"
-```
-
-## 🏗️ Development
-
-### Project Structure
-
-```
-apicrafter/
-├── __init__.py              # Package initialization
-├── cli.py                   # Main CLI application (Typer)
-├── http_client.py          # HTTP client wrapper (httpx)
-├── storage.py              # Collections/environments/history
-├── interactive.py          # Interactive prompts (questionary)
-├── renderer.py             # Pretty output formatting (rich)
-├── auth_manager.py         # Authentication management
-├── validator.py            # Request validation
-├── schema_loader.py        # Schema loading utilities
-├── field_prompter.py       # Interactive field prompting
-├── body.py                 # Request body handling
-└── tests/                  # Test suite
-    ├── __init__.py
-    ├── test_storage.py
-    └── test_http_client.py
-```
-
-### Running Tests
-
-```bash
-# Run all tests
-pytest
-
-# Run with coverage
-pytest --cov=apicrafter
-
-# Run specific test file
-pytest tests/test_storage.py
-```
-
-### Code Quality
-
-```bash
-# Format code
-black apicrafter/
-
-# Sort imports
-isort apicrafter/
-
-# Type checking
-mypy apicrafter/
-```
+For more detailed documentation, visit the [GitHub repository](https://github.com/yash-vrdhan/apicrafter).
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📝 License
 
@@ -261,18 +155,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [rich](https://github.com/Textualize/rich) - Beautiful terminal output
 - [questionary](https://github.com/tmbo/questionary) - Interactive prompts
 - [pydantic](https://github.com/pydantic/pydantic) - Data validation
-
-## 📊 Roadmap
-
-- [ ] TUI mode with full-screen interface
-- [ ] Authentication helpers (JWT, OAuth2)
-- [ ] WebSocket support
-- [ ] GraphQL support
-- [ ] Postman collection import/export
-- [ ] Request/response diffing
-- [ ] API documentation generation
-- [ ] Performance testing and benchmarking
-
----
-
-**Made with ❤️ for the terminal-loving developer community**
