@@ -70,7 +70,7 @@ jobs:
       run: twine check dist/*
     
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dist
         path: dist/
@@ -84,7 +84,7 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Download build artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: dist
         path: dist/
@@ -110,7 +110,7 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Download build artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: dist
         path: dist/
@@ -137,28 +137,24 @@ jobs:
         fetch-depth: 0
     
     - name: Create GitHub Release
-      uses: actions/create-release@v1
+      run: |
+        gh release create ${{ github.ref_name }} \
+          --title "Release ${{ github.ref_name }}" \
+          --notes "## What's Changed
+        
+        See the [changelog](https://github.com/yash-vrdhan/apicrafter/blob/master/CHANGELOG.md) for details.
+        
+        ## Installation
+        
+        \`\`\`bash
+        pip install apicrafter
+        \`\`\`
+        
+        ## Quick Start
+        
+        \`\`\`bash
+        apicrafter send GET https://httpbin.org/json
+        apicrafter interactive
+        \`\`\`"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref_name }}
-        release_name: Release ${{ github.ref_name }}
-        body: |
-          ## What's Changed
-          
-          See the [changelog](https://github.com/yash-vrdhan/apicrafter/blob/main/CHANGELOG.md) for details.
-          
-          ## Installation
-          
-          ```bash
-          pip install apicrafter
-          ```
-          
-          ## Quick Start
-          
-          ```bash
-          apicrafter send GET https://httpbin.org/json
-          apicrafter interactive
-          ```
-        draft: false
-        prerelease: false
