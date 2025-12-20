@@ -17,6 +17,7 @@ from .http_client import APIClient
 from .interactive import InteractiveSession
 from .renderer import ResponseRenderer
 from .storage import Environment, RequestData, StorageManager
+from .tui import ApiCrafterTUI
 
 # Create the main Typer app
 app = typer.Typer(
@@ -162,6 +163,13 @@ def send(
     except Exception as e:
         renderer.print_error(f"Request failed: {str(e)}")
         raise typer.Exit(1)
+
+
+@app.command()
+def tui() -> None:
+    """Launch the Textual User Interface."""
+    app = ApiCrafterTUI()
+    app.run()
 
 
 @app.command()

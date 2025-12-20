@@ -1,0 +1,26 @@
+#main-container {
+    layout: horizontal;
+    height: 100%;
+}
+
+#left-pane {
+    width: 40%;
+    border-right: solid $accent;
+}
+
+#right-pane {
+    width: 60%;
+}
+
+#request-pane, #response-pane {
+    height: 100%;
+    padding: 1;
+}
+
+CollectionList.focused {
+    border: round $secondary;
+}
+
+RequestList.focused {
+    border: round $secondary;
+}
