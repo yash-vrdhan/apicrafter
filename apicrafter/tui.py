@@ -10,11 +10,14 @@ from textual.widgets import (
     Pretty,
     TabbedContent,
     TabPane,
+    LoadingIndicator,
 )
 import json
 import httpx
 
-from textual.worker import run_worker
+from textual import work, events
+from textual.reactive import reactive
+from textual.message import Message
 
 from .storage import StorageManager, RequestData
 from .http_client import APIClient, ResponseData
@@ -31,13 +34,7 @@ class RequestList(ListView):
 class RequestDetail(Static):
     """A widget to display the details of a request."""
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.request_data: RequestData | None = None
-
-    def update_request(self, request_data: RequestData):
-        self.request_data = request_data
-        self.update()
+    request_data: RequestData | None = reactive(None)
 
     def render(self):
         if not self.request_data:
@@ -58,13 +55,14 @@ class RequestDetail(Static):
 class ResponseView(Static):
     """A widget to display the API response."""
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.response_data = None
+    response_data: ResponseData | None = reactive(None)
 
-    def update_response(self, response_data):
-        self.response_data = response_data
-        self.update()
+    class RequestFinished(Message):
+        """A message to indicate that a request has finished."""
+
+        def __init__(self, response: ResponseData) -> None:
+            self.response = response
+            super().__init__()
 
     def render(self):
         if not self.response_data:
@@ -101,41 +99,52 @@ class ApiCrafterTUI(App):
     def action_send_request(self) -> None:
         """Sends the selected API request."""
         if self.current_request:
-            run_worker(self.send_request_worker, thread=True)
+            self.query_one(LoadingIndicator).display = True
+            self.send_request_worker(self.current_request)
 
-    async def send_request_worker(self) -> None:
+    @work(thread=True)
+    def send_request_worker(self, request_to_send: RequestData) -> None:
         """Worker to send the request and update the UI."""
         try:
             with APIClient() as client:
-                response = client.send_from_request_data(self.current_request)
-
-                def update_ui():
-                    self.query_one(ResponseView).update_response(response)
-                    response_body = self.query_one("#response-body")
-                    try:
-                        data = json.loads(response.text)
-                        response_body.update(data)
-                    except json.JSONDecodeError:
-                        response_body.update(response.text)
-
-                self.call_from_thread(update_ui)
+                response = client.send_from_request_data(request_to_send)
+                self.post_message(ResponseView.RequestFinished(response))
+        except httpx.HTTPStatusError as e:
+            error_response = ResponseData(
+                status_code=e.response.status_code,
+                headers=dict(e.response.headers),
+                content=e.response.content,
+                text=e.response.text,
+                response_time=0,
+                url=str(e.request.url),
+                method=e.request.method,
+            )
+            self.post_message(ResponseView.RequestFinished(error_response))
         except httpx.RequestError as e:
-            error_text = f"Request failed: {self.current_request.method} {self.current_request.url}\n\n{e}"
+            error_text = f"Request failed: {request_to_send.method} {request_to_send.url}\n\n{e}"
             error_response = ResponseData(
                 status_code=0,
                 headers={},
                 content=error_text.encode(),
                 text=error_text,
                 response_time=0,
-                url=self.current_request.url,
-                method=self.current_request.method,
+                url=request_to_send.url,
+                method=request_to_send.method,
             )
+            self.post_message(ResponseView.RequestFinished(error_response))
 
-            def update_error_ui():
-                self.query_one(ResponseView).update_response(error_response)
-                self.query_one("#response-body").update(error_text)
-
-            self.call_from_thread(update_error_ui)
+    def on_response_view_request_finished(
+        self, message: ResponseView.RequestFinished
+    ) -> None:
+        """Called when a request has finished."""
+        self.query_one(ResponseView).response_data = message.response
+        response_body = self.query_one("#response-body")
+        try:
+            data = json.loads(message.response.text)
+            response_body.update(data)
+        except json.JSONDecodeError:
+            response_body.update(message.response.text)
+        self.query_one(LoadingIndicator).display = False
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
@@ -149,6 +158,7 @@ class ApiCrafterTUI(App):
                     yield RequestDetail(id="request-detail")
                     yield Pretty("", id="request-body")
                 with TabPane("Response", id="response-pane"):
+                    yield LoadingIndicator()
                     yield ResponseView(id="response-view")
                     yield Pretty("", id="response-body")
         yield Footer()
@@ -159,8 +169,9 @@ class ApiCrafterTUI(App):
         for collection_name in self.collections.keys():
             collection_list.append(ListItem(Label(collection_name)))
         self.query_one(CollectionList).focus()
+        self.query_one(LoadingIndicator).display = False
 
-    def on_focus(self, event: App.Focus) -> None:
+    def on_focus(self, event: events.Focus) -> None:
         """Called when a widget is focused."""
         for list_view in self.query(ListView):
             list_view.remove_class("focused")
@@ -182,7 +193,7 @@ class ApiCrafterTUI(App):
                 request_name, self.current_collection
             )
             if self.current_request:
-                self.query_one(RequestDetail).update_request(self.current_request)
+                self.query_one(RequestDetail).request_data = self.current_request
                 self.query_one("#request-body").update(self.current_request.body or "")
 
 
